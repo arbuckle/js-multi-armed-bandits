@@ -1,0 +1,152 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<title>multi armed bandit</title>
+
+	<style>
+		html, body {height: 100%; margin:0; padding: 0}
+		.container {
+			margin: 0 auto;
+			padding: 20px 0;
+			width: 960px;
+			border-left: 1px solid black;
+			border-right: 1px solid black;
+		}
+		.container h1 {
+			margin-top: 0;
+			padding-top: 0.67em;
+		}
+		.description {
+			margin: 0 15px;
+		}
+
+		.experiment {
+			width: 75%;
+			border: 1px solid #ccc;
+			padding: 15px;
+			margin: 30px auto;
+
+		}
+		.experiment h3, .experiment .machine, .experiment .results {
+			display:inline-block;
+			width: 49%;
+		}
+		.experiment h3 {margin-top: 0;}
+		.experiment .results span {margin-right: 10px;}
+	</style>
+</head>
+
+<body>
+	<div class="container">
+		<div class="description">
+			<h1>Experiments with multi-armed-bandit algorithms</h1>
+			<p>
+				Below is a series of experiments designed to test the effectiveness of various multi-armed-bandit algorithms at varied conversion rates.
+			</p>
+		</div>
+
+		<div id="EpsilonGreedy5" class="experiment">
+			<div class="header">
+				<h3>Epsilon Greedy 5%</h3>
+				<h3>Results</h3>
+			</div>
+			<div class="machine">
+				<div class="option"></div>
+				<button class="reward" type="text">Reward</button>
+				<button class="skip" type="text">Skip</button>
+				<br>
+				<button class="auto" type="text">Auto</button>
+				<button class="stop" type="text">Stop</button>
+				<button class="reset" type="text">Reset</button>
+			</div>
+			<div class="results">
+				&lt;no results yet&gt;
+			</div>
+		</div>
+
+		<div id="EpsilonGreedy10" class="experiment">
+			<div class="header">
+				<h3>Epsilon Greedy 10%</h3>
+				<h3>Results</h3>
+			</div>
+			<div class="machine">
+				<div class="option"></div>
+				<button class="reward" type="text">Reward</button>
+				<button class="skip" type="text">Skip</button>
+				<br>
+				<button class="auto" type="text">Auto</button>
+				<button class="stop" type="text">Stop</button>
+				<button class="reset" type="text">Reset</button>
+			</div>
+			<div class="results">
+				&lt;no results yet&gt;
+			</div>
+		</div>
+		<div id="EpsilonGreedy15" class="experiment">
+			<div class="header">
+				<h3>Epsilon Greedy 15%</h3>
+				<h3>Results</h3>
+			</div>
+			<div class="machine">
+				<div class="option"></div>
+				<button class="reward" type="text">Reward</button>
+				<button class="skip" type="text">Skip</button>
+				<br>
+				<button class="auto" type="text">Auto</button>
+				<button class="stop" type="text">Stop</button>
+				<button class="reset" type="text">Reset</button>
+			</div>
+			<div class="results">
+				&lt;no results yet&gt;
+			</div>
+		</div>
+
+	</div>
+
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+	<script type="text/javascript" src="js/epsilon-greedy.js"></script>
+	<script>
+		$(function(){
+			var epsilon_greedy5 = new epsilon_greedy();
+			epsilon_greedy5.init({
+				$wrapper: $('#EpsilonGreedy5'),
+				epsilon: 0.05,
+				levers: {
+					'purple': [1, 1, 0.23],
+					'green': [1, 1, 0.33],
+					'blue': [1, 1, 0.37],
+					'orange': [1, 1, 0.41],
+					'black': [1, 1, 0.27]
+				}
+			});
+
+			var epsilon_greedy10 = new epsilon_greedy();
+			epsilon_greedy10.init({
+				$wrapper: $('#EpsilonGreedy10'),
+				epsilon: 0.10,
+				levers: {
+					'purple': [1, 1, 0.23],
+					'green': [1, 1, 0.33],
+					'blue': [1, 1, 0.37],
+					'orange': [1, 1, 0.41],
+					'black': [1, 1, 0.27]
+				}
+			});
+
+			var epsilon_greedy15 = new epsilon_greedy();
+			epsilon_greedy15.init({
+				$wrapper: $('#EpsilonGreedy15'),
+				epsilon: 0.50,
+				levers: {
+					'purple': [1, 1, 0.23],
+					'green': [1, 1, 0.33],
+					'blue': [1, 1, 0.37],
+					'orange': [1, 1, 0.41],
+					'black': [1, 1, 0.27]
+				}
+			});
+
+		});
+	</script>
+</body>
+</html>
