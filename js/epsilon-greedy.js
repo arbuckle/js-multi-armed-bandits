@@ -25,6 +25,7 @@ function epsilon_greedy() {
 			}
 			this.nLevers = count;
 
+			//bindings for HTML control elements. (consider building HTML within the module)
 			this.$wrapper.on('click', '.reward', {'bandito': this}, function(event) {
 				event.data['bandito']._reward();
 			}).on('click', '.skip', {'bandito': this}, function(event) {
@@ -51,9 +52,12 @@ function epsilon_greedy() {
 		},
 		_autoInterval: undefined,
 		_auto: function() {
+			/*
+			 *	Automatically performs many iterations of the test using the conversion rates provided in levers.color[2]
+			 */
 			this._autoInterval = setInterval(function(bandito) {
 				var selection = Math.random();
-				if (bandito.levers[bandito._current][2] > selection) {
+				if (bandito.levers[bandito._current][2] >= selection) {
 					bandito.$wrapper.find('.reward').trigger('click');
 				} else {
 					bandito.$wrapper.find('.skip').trigger('click');
@@ -61,6 +65,10 @@ function epsilon_greedy() {
 			}, 0, this);
 		},
 		_next: function() {
+			/*
+			 *	Resets the active lever by either displaying a random lever this.epsilon % of the time,
+			 *	or displays the lever with the best conversion rate.
+			 */
 			this._drawResult();
 
 			var lever,
@@ -95,15 +103,25 @@ function epsilon_greedy() {
 			this._drawMachine();
 		},
 		_reward: function() {
+			/*
+			 *	Increments the reward counter
+			 */
 			this.levers[this._current][1] += 1;
 			this._next();
 		},
 		_drawMachine: function() {
+			/*
+			 * Updates the UI to display the currently selected lever.
+			 */
 			var $option = this.$wrapper.find('.machine > .option');
 			$option.html(this._current);
 			$option.css('border', '2px solid ' + this._current);
 		},
 		_drawResult: function() {
+			/*
+			 * Updates the UI to display the results of the series of tests
+			 *
+			 */
 			var $results = this.$wrapper.find('.results'),
 				resultsHTML = '';
 
