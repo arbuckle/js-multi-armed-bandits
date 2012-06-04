@@ -32,11 +32,18 @@
 			width: 49%;
 		}
 		.experiment h3 {margin-top: 0;}
-		.experiment .results span {margin-right: 10px;}
+		.experiment .results td {padding-right: 15px;}
+		
+		.controls {position:fixed; top:10px; left: 10px;}
 	</style>
 </head>
 
 <body>
+	<div class="controls">
+		<button id="StartAll">Start All</button>
+		<button id="StopAll">Stop All</button>
+	</div>
+
 	<div class="container">
 		<div class="description">
 			<h1>Experiments with multi-armed-bandit algorithms</h1>
@@ -100,16 +107,114 @@
 				&lt;no results yet&gt;
 			</div>
 		</div>
-
+		<div id="EpsilonLogNaive" class="experiment">
+			<div class="header">
+				<h3>Naive Logarithmic Epsilon</h3>
+				<h3>Results</h3>
+			</div>
+			<div class="machine">
+				<div class="option"></div>
+				<button class="reward" type="text">Reward</button>
+				<button class="skip" type="text">Skip</button>
+				<br>
+				<button class="auto" type="text">Auto</button>
+				<button class="stop" type="text">Stop</button>
+				<button class="reset" type="text">Reset</button>
+			</div>
+			<div class="results">
+				&lt;no results yet&gt;
+			</div>
+			<p>
+				For iterations t, e = Log(t)/t
+			</p>
+		</div>
+		<div id="EpsilonLogImproved" class="experiment">
+			<div class="header">
+				<h3>Improved Logarithmic Epsilon</h3>
+				<h3>Results</h3>
+			</div>
+			<div class="machine">
+				<div class="option"></div>
+				<button class="reward" type="text">Reward</button>
+				<button class="skip" type="text">Skip</button>
+				<br>
+				<button class="auto" type="text">Auto</button>
+				<button class="stop" type="text">Stop</button>
+				<button class="reset" type="text">Reset</button>
+			</div>
+			<div class="results">
+				&lt;no results yet&gt;
+			</div>
+			<p>
+				For iterations t, e = log(t)^2.5/t 
+			</p>
+		</div>
+		<div id="EpsilonFirstLog" class="experiment">
+			<div class="header">
+				<h3>Epsilon First Logarithmic</h3>
+				<h3>Results</h3>
+			</div>
+			<div class="machine">
+				<div class="option"></div>
+				<button class="reward" type="text">Reward</button>
+				<button class="skip" type="text">Skip</button>
+				<br>
+				<button class="auto" type="text">Auto</button>
+				<button class="stop" type="text">Stop</button>
+				<button class="reset" type="text">Reset</button>
+			</div>
+			<div class="results">
+				&lt;no results yet&gt;
+			</div>
+			<p>
+				For iterations t: <br>
+				e=t for t < 1000, then <br>
+				e = log(t)^2.5/t 
+			</p>
+		</div>
+		<div id="ConfidenceBounded" class="experiment">
+			<div class="header">
+				<h3>Confidence Bounder</h3>
+				<h3>Results</h3>
+			</div>
+			<div class="machine">
+				<div class="option"></div>
+				<button class="reward" type="text">Reward</button>
+				<button class="skip" type="text">Skip</button>
+				<br>
+				<button class="auto" type="text">Auto</button>
+				<button class="stop" type="text">Stop</button>
+				<button class="reset" type="text">Reset</button>
+			</div>
+			<div class="results">
+				&lt;no results yet&gt;
+			</div>
+			<p>
+				Calculates confidence bound for each lever and 
+				pulls the lever with the highest level of confidence.
+			</p>
+		</div>
+		
 	</div>
 
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-	<script type="text/javascript" src="js/epsilon-greedy.js"></script>
+	<script type="text/javascript" src="js/bandit.js"></script>
 	<script>
-		var epsilon_greedy5 = new epsilon_greedy();
+		$('#StartAll').click(function(){
+			$(this).attr('disabled', 'disabled');
+			$('.auto').trigger('click');
+		});
+		$('#StopAll').click(function(){
+			$('#StartAll').attr('disabled', false);
+			$('.stop').trigger('click');
+		});
+	
+	
+	
+		var epsilon_greedy5 = new bandit();
 		epsilon_greedy5.init({
 			$wrapper: $('#EpsilonGreedy5'),
-			epsilon: 0.05,
+			_epsilon: 0.05,
 			levers: {
 				'purple': [1, 1, 0.23],
 				'green': [1, 1, 0.33],
@@ -119,10 +224,10 @@
 			}
 		});
 
-		var epsilon_greedy10 = new epsilon_greedy();
+		var epsilon_greedy10 = new bandit();
 		epsilon_greedy10.init({
 			$wrapper: $('#EpsilonGreedy10'),
-			epsilon: 0.10,
+			_epsilon: 0.10,
 			levers: {
 				'purple': [1, 1, 0.23],
 				'green': [1, 1, 0.33],
@@ -132,10 +237,10 @@
 			}
 		});
 
-		var epsilon_greedy15 = new epsilon_greedy();
+		var epsilon_greedy15 = new bandit();
 		epsilon_greedy15.init({
 			$wrapper: $('#EpsilonGreedy15'),
-			epsilon: 0.50,
+			_epsilon: 0.15,
 			levers: {
 				'purple': [1, 1, 0.23],
 				'green': [1, 1, 0.33],
@@ -144,7 +249,85 @@
 				'black': [1, 1, 0.27]
 			}
 		});
+		
+		var epsilon_log_naive = new bandit();
+		epsilon_log_naive.init({
+			$wrapper: $('#EpsilonLogNaive'),
+			_epsilon: 1,
+			levers: {
+				'purple': [1, 1, 0.23],
+				'green': [1, 1, 0.33],
+				'blue': [1, 1, 0.37],
+				'orange': [1, 1, 0.41],
+				'black': [1, 1, 0.27]
+			}
+		});
+		epsilon_log_naive._resetEpsilon = function() {
+			/*
+			 *	for t iterations, epsilon decreases at a rate of log(t)/t
+			 */
+			this._epsilon = Math.log(this._totalIterations)/this._totalIterations;
+		}
 
+		var epsilon_log_improved = new bandit();
+		epsilon_log_improved.init({
+			$wrapper: $('#EpsilonLogImproved'),
+			_epsilon: 1,
+			levers: {
+				'purple': [1, 1, 0.23],
+				'green': [1, 1, 0.33],
+				'blue': [1, 1, 0.37],
+				'orange': [1, 1, 0.41],
+				'black': [1, 1, 0.27]
+			}
+		});
+		epsilon_log_improved._resetEpsilon = function() {
+			/*
+			 *	appropriate for very low conversion rates
+			 *	for t iterations, epsilon decreases at a rate of log(t)^2.5/t
+			 */
+			this._epsilon = Math.pow(Math.log(this._totalIterations), 2.5) / this._totalIterations;
+		}
+
+		var epsilon_first_log = new bandit();
+		epsilon_first_log.init({
+			$wrapper: $('#EpsilonFirstLog'),
+			_epsilon: 1,
+			levers: {
+				'purple': [1, 1, 0.23],
+				'green': [1, 1, 0.33],
+				'blue': [1, 1, 0.37],
+				'orange': [1, 1, 0.41],
+				'black': [1, 1, 0.27]
+			}
+		});
+		epsilon_first_log._resetEpsilon = function() {
+			/*
+			 *	appropriate for very low conversion rates
+			 *	for t iterations, epsilon decreases at a rate of log(t)^2.5/t
+			 */
+			if (this._totalIterations > 1000) {
+				this._epsilon = Math.pow(Math.log(this._totalIterations), 2.5) / this._totalIterations;
+			}
+		}
+
+
+		var confidence_bounded = new bandit();
+		confidence_bounded.init({
+			$wrapper: $('#ConfidenceBounded'),
+			_epsilon: -1,
+			levers: {
+				'purple': [1, 1, 0.23],
+				'green': [1, 1, 0.33],
+				'blue': [1, 1, 0.37],
+				'orange': [1, 1, 0.41],
+				'black': [1, 1, 0.27]
+			}
+		});
+		confidence_bounded._getLeverScore = function(lever) {
+			ratio = this._getSignificance(lever);
+			return ratio;
+		}
 	</script>
 </body>
 </html>
