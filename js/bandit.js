@@ -6,7 +6,7 @@ function bandit() {
 		},
 		nLevers: 0,
 		_bestLever: undefined,
-		_totalIterations: 1,
+		_totalIterations: 0,
 		_totalRewards: 0,
 		_current: undefined,
 		_epsilon: 1,
@@ -20,6 +20,7 @@ function bandit() {
 				}
 			}
 			this._epsilonOriginal = this._epsilon;
+			
 
 			//getting the number of levers
 			var lever,
@@ -164,28 +165,41 @@ function bandit() {
 			 *	Determines the confidence bound for a given lever using calculations presented here:
 			 *	http://www.chrisstucchio.com/blog/2012/bandit_algorithms_vs_ab.html
 			 */
-			function Phi3 (z, mu, sigma){return Phi((z-mu)/sigma);}function Phi(z){return 0.5 * (1 + erf(z / Math.sqrt(2)));}function erf(z){t = 1 / (1 + (0.5 * Math.abs(z)));ans = 1 - (t * Math.exp(((-1 * z) * z)- 1.26551223 + t * (1.00002368+ t * (0.37409196 + t * (0.09678418+ t * (-0.18628806 + t * (0.27886807+ t * (-1.13520398 + t * (1.48851587+ t * (-0.82215223+ t * (0.17087277)))))))))));if (z >= 0){res = ans;}else{res = - ans;};return res}function normdist(n, m,s){return 100*Phi3(n, m ,s);}
+			//http://paft.ca/web-based-pert-calculator-using-javascript/
+			function Phi3 (z, mu, sigma){return Phi((z-mu)/sigma);}function Phi(z){return 0.5 * (1 + erf(z / Math.sqrt(2)));}function erf(z){t = 1 / (1 + (0.5 * Math.abs(z)));ans = 1 - (t * Math.exp(((-1 * z) * z)- 1.26551223 + t * (1.00002368+ t * (0.37409196 + t * (0.09678418+ t * (-0.18628806 + t * (0.27886807+ t * (-1.13520398 + t * (1.48851587+ t * (-0.82215223+ t * (0.17087277)))))))))));if (z >= 0){res = ans;}else{res = - ans;};return res}function normdist(n, m,s){return Phi3(n, m ,s);}
 			 
 			////////////////////////////////////////
+			var l,
+				other_rewards = 0,
+				other_iterations = 0;
+			for (l in this.levers) {
+				if (l === lever) {
+					continue;
+				} else {
+					other_rewards += this.levers[l][1];
+					other_iterations += this.levers[l][0];
+				}
+			}
 			
 			var lever_p = this.levers[lever][1] / this.levers[lever][0],
-				other_p = (this._totalRewards - this.levers[lever][1]) / (this._totalIterations - this.levers[lever][0]),
-				lever_se = lever_p * (1 - lever_p) / this.levers[lever][1],
-				other_se = other_p * (1 - other_p) / (this._totalRewards - this.levers[lever][1]),
-				floor95 = (lever_p - 1.65 * lever_se > 0) ? 0 : (lever_p - 1.65 * lever_se),
-				ceiling95 = (lever_p + 1.65 * lever_se > 1) ? 1 : (lever_p + 1.65 * lever_se),
-				zScore = (lever_p - other_p) / Math.sqrt(Math.pow(lever_se, 2)+Math.pow(other_se, 2)),
+				other_p = (other_rewards) / (other_iterations),
+				lever_se = Math.sqrt(lever_p * (1 - lever_p) / this.levers[lever][0]),
+				other_se = Math.sqrt(other_p * (1 - other_p) / (other_iterations)),
+				//floor95 = (lever_p - 1.65 * lever_se > 0) ? 0 : (lever_p - 1.65 * lever_se),
+				//ceiling95 = (lever_p + 1.65 * lever_se > 1) ? 1 : (lever_p + 1.65 * lever_se),
+				zScore = (other_p - lever_p) / Math.sqrt(Math.pow(other_se, 2) + Math.pow(lever_se, 2)),
 				p_value = normdist(zScore, 0, 1),
 				sig95 = (p_value < 0.05 || p_value > 0.95) ? true : false,
 				sig99 = (p_value < 0.01 || p_value > 0.99) ? true : false;
 			
 			return {
+				lever: lever,
 				lever_p: lever_p,
 				other_p: other_p,
 				lever_se: lever_se,
 				other_se: other_se,
-				floor95: floor95,
-				ceiling95: ceiling95,
+				//floor95: floor95,
+				//ceiling95: ceiling95,
 				zScore: zScore,
 				p_value: p_value,
 				sig95: sig95,
@@ -212,7 +226,7 @@ function bandit() {
 				$results = this.$wrapper.find('.results'),
 				regret = this._calculateRegret(),
 				resultsHTML = '';
-
+			
 			resultsHTML +=	'<table><tbody><tr class="heading">' +
 							'<td class="lever-name">' + 'Lever' +
 							'</td><td class="lever-iterations">' + 'Iter' +
