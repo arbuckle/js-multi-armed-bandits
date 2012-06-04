@@ -106,47 +106,45 @@
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 	<script type="text/javascript" src="js/epsilon-greedy.js"></script>
 	<script>
-		$(function(){
-			var epsilon_greedy5 = new epsilon_greedy();
-			epsilon_greedy5.init({
-				$wrapper: $('#EpsilonGreedy5'),
-				epsilon: 0.05,
-				levers: {
-					'purple': [1, 1, 0.23],
-					'green': [1, 1, 0.33],
-					'blue': [1, 1, 0.37],
-					'orange': [1, 1, 0.41],
-					'black': [1, 1, 0.27]
-				}
-			});
-
-			var epsilon_greedy10 = new epsilon_greedy();
-			epsilon_greedy10.init({
-				$wrapper: $('#EpsilonGreedy10'),
-				epsilon: 0.10,
-				levers: {
-					'purple': [1, 1, 0.23],
-					'green': [1, 1, 0.33],
-					'blue': [1, 1, 0.37],
-					'orange': [1, 1, 0.41],
-					'black': [1, 1, 0.27]
-				}
-			});
-
-			var epsilon_greedy15 = new epsilon_greedy();
-			epsilon_greedy15.init({
-				$wrapper: $('#EpsilonGreedy15'),
-				epsilon: 0.50,
-				levers: {
-					'purple': [1, 1, 0.23],
-					'green': [1, 1, 0.33],
-					'blue': [1, 1, 0.37],
-					'orange': [1, 1, 0.41],
-					'black': [1, 1, 0.27]
-				}
-			});
-
+		var epsilon_greedy5 = new epsilon_greedy();
+		epsilon_greedy5.init({
+			$wrapper: $('#EpsilonGreedy5'),
+			epsilon: 0.05,
+			levers: {
+				'purple': [1, 1, 0.23],
+				'green': [1, 1, 0.33],
+				'blue': [1, 1, 0.37],
+				'orange': [1, 1, 0.41],
+				'black': [1, 1, 0.27]
+			}
 		});
+
+		var epsilon_greedy10 = new epsilon_greedy();
+		epsilon_greedy10.init({
+			$wrapper: $('#EpsilonGreedy10'),
+			epsilon: 0.10,
+			levers: {
+				'purple': [1, 1, 0.23],
+				'green': [1, 1, 0.33],
+				'blue': [1, 1, 0.37],
+				'orange': [1, 1, 0.41],
+				'black': [1, 1, 0.27]
+			}
+		});
+
+		var epsilon_greedy15 = new epsilon_greedy();
+		epsilon_greedy15.init({
+			$wrapper: $('#EpsilonGreedy15'),
+			epsilon: 0.50,
+			levers: {
+				'purple': [1, 1, 0.23],
+				'green': [1, 1, 0.33],
+				'blue': [1, 1, 0.37],
+				'orange': [1, 1, 0.41],
+				'black': [1, 1, 0.27]
+			}
+		});
+
 	</script>
 </body>
 </html>
