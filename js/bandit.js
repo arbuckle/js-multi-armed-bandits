@@ -153,17 +153,46 @@ function bandit() {
 				percentage: regret / this._totalRewards
 			};
 		},
+		_getCBound: function(lever) {
+			var avgRatio = this._totalRewards / this._totalIterations;
+			var leverRatio = this.levers[lever][1] / this.levers[lever][0];
+			var cBound = leverRatio + Math.sqrt(2 * Math.log(this._totalIterations) / this.levers[lever][0]);
+			return cBound;
+		},
 		_getSignificance: function(lever) {
 			/*
 			 *	Determines the confidence bound for a given lever using calculations presented here:
 			 *	http://www.chrisstucchio.com/blog/2012/bandit_algorithms_vs_ab.html
 			 */
-			var avgRatio = this._totalRewards / this._totalIterations;
-			var leverRatio = this.levers[lever][1] / this.levers[lever][0];
+			function Phi3 (z, mu, sigma){return Phi((z-mu)/sigma);}function Phi(z){return 0.5 * (1 + erf(z / Math.sqrt(2)));}function erf(z){t = 1 / (1 + (0.5 * Math.abs(z)));ans = 1 - (t * Math.exp(((-1 * z) * z)- 1.26551223 + t * (1.00002368+ t * (0.37409196 + t * (0.09678418+ t * (-0.18628806 + t * (0.27886807+ t * (-1.13520398 + t * (1.48851587+ t * (-0.82215223+ t * (0.17087277)))))))))));if (z >= 0){res = ans;}else{res = - ans;};return res}function normdist(n, m,s){return 100*Phi3(n, m ,s);}
+			 
+			////////////////////////////////////////
 			
-			var cBound = leverRatio + Math.sqrt(2 * Math.log(this._totalIterations) / this.levers[lever][0]);
+			var lever_p = this.levers[lever][1] / this.levers[lever][0],
+				other_p = (this._totalRewards - this.levers[lever][1]) / (this._totalIterations - this.levers[lever][0]),
+				lever_se = lever_p * (1 - lever_p) / this.levers[lever][1],
+				other_se = other_p * (1 - other_p) / (this._totalRewards - this.levers[lever][1]),
+				floor95 = (lever_p - 1.65 * lever_se > 0) ? 0 : (lever_p - 1.65 * lever_se),
+				ceiling95 = (lever_p + 1.65 * lever_se > 1) ? 1 : (lever_p + 1.65 * lever_se),
+				zScore = (lever_p - other_p) / Math.sqrt(Math.pow(lever_se, 2)+Math.pow(other_se, 2)),
+				p_value = normdist(zScore, 0, 1),
+				sig95 = (p_value < 0.05 || p_value > 0.95) ? true : false,
+				sig99 = (p_value < 0.01 || p_value > 0.99) ? true : false;
 			
-			return cBound;
+			return {
+				lever_p: lever_p,
+				other_p: other_p,
+				lever_se: lever_se,
+				other_se: other_se,
+				floor95: floor95,
+				ceiling95: ceiling95,
+				zScore: zScore,
+				p_value: p_value,
+				sig95: sig95,
+				sig99: sig99
+			}
+
+
 		},
 		_drawMachine: function() {
 			/*
@@ -179,6 +208,7 @@ function bandit() {
 			 *
 			 */
 			var lever,
+				stats,
 				$results = this.$wrapper.find('.results'),
 				regret = this._calculateRegret(),
 				resultsHTML = '';
@@ -187,20 +217,27 @@ function bandit() {
 							'<td class="lever-name">' + 'Lever' +
 							'</td><td class="lever-iterations">' + 'Iter' +
 							'</td><td class="lever-pulls">' + 'Pulls' +
-							'</td><td class="lever-conversion-rate">' + 'Rate' +
-							'</td><td class="lever-statistical-significance">' + 'Sig' +
+							'</td><td class="lever-stats">' + 'Rate' +
+							'</td><td class="lever-stats">' + 'StdErr' +
+							'</td><td class="lever-stats">' + 'p_value' +
+							'</td><td class="lever-stats">' + '99% sig' +
 							'</td></tr>';
 			for (lever in this.levers) {
+				stats = this._getSignificance(lever);
 				resultsHTML +=	'<tr><td class="lever-name">' +
 								lever +
 								'</td><td class="lever-iterations">' +
 								this.levers[lever][0] +
 								'</td><td class="lever-pulls">' +
 								this.levers[lever][1] +
-								'</td><td class="lever-conversion-rate">' +
-								(this.levers[lever][1]  / this.levers[lever][0]).toFixed(4) +
-								'%</td><td class="lever-statistical-significance">' +
-								this._getSignificance(lever).toFixed(6) +
+								'</td><td class="lever-stats">' +
+								stats.lever_p.toFixed(4) + 
+								'%</td><td class="lever-stats">' +
+								stats.lever_se.toFixed(6) +
+								'</td><td class="lever-stats">' +
+								stats.p_value.toFixed(5) + 
+								'</td><td class="lever-stats">' +
+								stats.sig99 + 
 								'</td></tr>';
 			}
 			//adding Regret calculation

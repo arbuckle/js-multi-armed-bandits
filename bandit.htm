@@ -21,7 +21,7 @@
 		}
 
 		.experiment {
-			width: 75%;
+			width: 90%;
 			border: 1px solid #ccc;
 			padding: 15px;
 			margin: 30px auto;
@@ -325,7 +325,7 @@
 			}
 		});
 		confidence_bounded._getLeverScore = function(lever) {
-			ratio = this._getSignificance(lever);
+			ratio = this._getCBound(lever);
 			return ratio;
 		}
 	</script>
