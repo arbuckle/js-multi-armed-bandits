@@ -10,6 +10,7 @@ function bandit() {
 		_totalRewards: 0,
 		_current: undefined,
 		_epsilon: 1,
+		_epsilonOriginal: 1,
 		$wrapper: undefined,
 		init: function() {
 			//populating epsilon and wrapper from arguments
@@ -18,6 +19,7 @@ function bandit() {
 					this[argument] = arguments[0][argument];
 				}
 			}
+			this._epsilonOriginal = this._epsilon;
 
 			//getting the number of levers
 			var lever,
@@ -43,6 +45,7 @@ function bandit() {
 				var lever,
 					bandito = event.data['bandito'];
 				for (lever in bandito.levers) {
+					this._epsilon = this._epsilonOriginal;
 					bandito.levers[lever][0] = 1;
 					bandito.levers[lever][1] = 1;
 					bandito._totalIterations = 0;
