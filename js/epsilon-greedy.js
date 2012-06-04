@@ -5,7 +5,9 @@ function epsilon_greedy() {
 			//'purple': [1, 1, 0.23],
 		},
 		nLevers: 0,
-		_iterations: 0,
+		_bestLever: undefined,
+		_totalIterations: 0,
+		_totalRewards: 0,
 		_current: undefined,
 		epsilon: 0,
 		$wrapper: undefined,
@@ -43,7 +45,8 @@ function epsilon_greedy() {
 				for (lever in bandito.levers) {
 					bandito.levers[lever][0] = 1;
 					bandito.levers[lever][1] = 1;
-					bandito._iterations = 0;
+					bandito._totalIterations = 0;
+					bandito._totalRewards = 0;
 					bandito._drawResult();
 				}
 			});
@@ -98,7 +101,8 @@ function epsilon_greedy() {
 			}
 
 			this.levers[this._current][0] += 1;
-			this._iterations += 1;
+			this._totalIterations += 1;
+			this._bestLever = bestLever;
 
 			this._drawMachine();
 		},
@@ -107,7 +111,26 @@ function epsilon_greedy() {
 			 *	Increments the reward counter
 			 */
 			this.levers[this._current][1] += 1;
+			this._totalRewards += 1;
 			this._next();
+		},
+		_calculateRegret: function() {
+			/*
+			 *	Regret P after T rounds is defined as the difference between the reward sum associated with an optimal strategy
+			 *	and the sum of the collected rewards. Basically,
+			 *	(badIterations * optimum conversion rate) - badPulls = regret
+			 */
+			if (typeof(this._bestLever) === 'undefined') {
+				return 0;
+			}
+			var badIterations,
+				badPulls,
+				regret;
+
+			badIterations = this._totalIterations - this.levers[this._bestLever][0];
+			badPulls = this._totalRewards - this.levers[this._bestLever][1];
+			regret = (badIterations * this.levers[this._bestLever][1] / this.levers[this._bestLever][0]) - badPulls;
+			return regret;
 		},
 		_drawMachine: function() {
 			/*
@@ -142,7 +165,10 @@ function epsilon_greedy() {
 								(this.levers[lever][1]  / this.levers[lever][0]).toFixed(4) +
 								'%</td></tr>';
 			}
-			resultsHTML += '</tbody></table>';
+			resultsHTML +=	'<tr><td colspan=2>Regret:</td>' +
+							'<td colspan=2>' +
+							this._calculateRegret().toFixed(1) +
+							'</td></tr></tbody></table>';
 			$results.html(resultsHTML);
 		}
 	};
