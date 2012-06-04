@@ -178,10 +178,6 @@ function bandit() {
 			 * Updates the UI to display the results of the series of tests
 			 *
 			 */
-			if (this._totalIterations > 1 && this._totalIterations % 100 !== 0) {
-				return;
-			}
-			
 			var lever,
 				$results = this.$wrapper.find('.results'),
 				regret = this._calculateRegret(),
