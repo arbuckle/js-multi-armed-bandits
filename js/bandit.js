@@ -219,7 +219,9 @@ function bandit() {
 							'</td><td class="lever-pulls">' + 'Pulls' +
 							'</td><td class="lever-stats">' + 'Rate' +
 							'</td><td class="lever-stats">' + 'StdErr' +
+							'</td><td class="lever-stats">' + 'zScore' +
 							'</td><td class="lever-stats">' + 'p_value' +
+							'</td><td class="lever-stats">' + '95% sig' +
 							'</td><td class="lever-stats">' + '99% sig' +
 							'</td></tr>';
 			for (lever in this.levers) {
@@ -235,9 +237,14 @@ function bandit() {
 								'%</td><td class="lever-stats">' +
 								stats.lever_se.toFixed(6) +
 								'</td><td class="lever-stats">' +
-								stats.p_value.toFixed(5) + 
+								stats.zScore.toFixed(4) + 
+								'</td><td class="lever-stats">' +
+								stats.p_value.toFixed(4) + 
+								'</td><td class="lever-stats">' +
+								stats.sig95 + 
 								'</td><td class="lever-stats">' +
 								stats.sig99 + 
+								'</td><td class="lever-stats">' +
 								'</td></tr>';
 			}
 			//adding Regret calculation
