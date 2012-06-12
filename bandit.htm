@@ -33,10 +33,10 @@
 		}
 		.experiment .machine {width: 26%;}
 		.experiment .results {width: 73%;}
-		
+
 		.experiment h3 {margin-top: 0;}
 		.experiment .results td {padding-left: 20px;}
-		
+
 		.controls {position:fixed; top:10px; left: 10px;}
 	</style>
 </head>
@@ -149,7 +149,7 @@
 				&lt;no results yet&gt;
 			</div>
 			<p>
-				For iterations t, e = log(t)^2.5/t 
+				For iterations t, e = log(t)^2.5/t
 			</p>
 		</div>
 		<div id="EpsilonFirstLog" class="experiment">
@@ -172,9 +172,11 @@
 			<p>
 				For iterations t: <br>
 				e=t for t < 1000, then <br>
-				e = log(t)^2.5/t 
+				e = log(t)^2.5/t
 			</p>
 		</div>
+
+
 		<div id="ConfidenceBounded" class="experiment">
 			<div class="header">
 				<h3>Confidence Bounder</h3>
@@ -193,11 +195,65 @@
 				&lt;no results yet&gt;
 			</div>
 			<p>
-				Calculates confidence bound for each lever and 
+				Calculates confidence bound for each lever and
 				pulls the lever with the highest level of confidence.
 			</p>
 		</div>
-		
+
+		<div id="CBLimitedIterations" class="experiment">
+			<div class="header">
+				<h3>Confidence Bounder 2</h3>
+				<h3>Results</h3>
+			</div>
+			<div class="machine">
+				<div class="option"></div>
+				<button class="reward" type="text">Reward</button>
+				<button class="skip" type="text">Skip</button>
+				<br>
+				<button class="auto" type="text">Auto</button>
+				<button class="stop" type="text">Stop</button>
+				<button class="reset" type="text">Reset</button>
+			</div>
+			<div class="results">
+				&lt;no results yet&gt;
+			</div>
+			<p>
+				Calculates confidence bound for each lever and
+				pulls the lever with the highest level of confidence.
+				<br>
+				Runs for a set number of iterations and then stops.
+			</p>
+		</div>
+
+
+		<div id="StatSigger" class="experiment">
+			<div class="header">
+				<h3>StatSigger</h3>
+				<h3>Results</h3>
+			</div>
+			<div class="machine">
+				<div class="option"></div>
+				<button class="reward" type="text">Reward</button>
+				<button class="skip" type="text">Skip</button>
+				<br>
+				<button class="auto" type="text">Auto</button>
+				<button class="stop" type="text">Stop</button>
+				<button class="reset" type="text">Reset</button>
+			</div>
+			<div class="results">
+				&lt;no results yet&gt;
+			</div>
+			<p>
+				Calculates confidence bound for each lever and
+				pulls the lever with the highest level of confidence,
+				ignoring levers for which statistical significance
+				has already been achieved.
+				<br><br>
+				This strategy is basically guaranteed to result in a
+				class 1 error every time.
+			</p>
+		</div>
+
 	</div>
 
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
@@ -211,59 +267,42 @@
 			$('#StartAll').attr('disabled', false);
 			$('.stop').trigger('click');
 		});
-	
-	
-	
+
+		var levers =	{
+						'purple': [1, 1, 0.23],
+						'green': [1, 1, 0.33],
+						'blue': [1, 1, 0.37],
+						'orange': [1, 1, 0.41],
+						'black': [1, 1, 0.27]
+						}
+
+
 		var epsilon_greedy5 = new bandit();
 		epsilon_greedy5.init({
 			$wrapper: $('#EpsilonGreedy5'),
 			_epsilon: 0.05,
-			levers: {
-				'purple': [1, 1, 0.23],
-				'green': [1, 1, 0.33],
-				'blue': [1, 1, 0.37],
-				'orange': [1, 1, 0.41],
-				'black': [1, 1, 0.27]
-			}
+			levers: levers
 		});
 
 		var epsilon_greedy10 = new bandit();
 		epsilon_greedy10.init({
 			$wrapper: $('#EpsilonGreedy10'),
 			_epsilon: 0.10,
-			levers: {
-				'purple': [1, 1, 0.23],
-				'green': [1, 1, 0.33],
-				'blue': [1, 1, 0.37],
-				'orange': [1, 1, 0.41],
-				'black': [1, 1, 0.27]
-			}
+			levers: levers
 		});
 
 		var epsilon_greedy15 = new bandit();
 		epsilon_greedy15.init({
 			$wrapper: $('#EpsilonGreedy15'),
 			_epsilon: 0.15,
-			levers: {
-				'purple': [1, 1, 0.23],
-				'green': [1, 1, 0.33],
-				'blue': [1, 1, 0.37],
-				'orange': [1, 1, 0.41],
-				'black': [1, 1, 0.27]
-			}
+			levers: levers
 		});
-		
+
 		var epsilon_log_naive = new bandit();
 		epsilon_log_naive.init({
 			$wrapper: $('#EpsilonLogNaive'),
 			_epsilon: 1,
-			levers: {
-				'purple': [1, 1, 0.23],
-				'green': [1, 1, 0.33],
-				'blue': [1, 1, 0.37],
-				'orange': [1, 1, 0.41],
-				'black': [1, 1, 0.27]
-			}
+			levers: levers
 		});
 		epsilon_log_naive._resetEpsilon = function() {
 			/*
@@ -276,13 +315,7 @@
 		epsilon_log_improved.init({
 			$wrapper: $('#EpsilonLogImproved'),
 			_epsilon: 1,
-			levers: {
-				'purple': [1, 1, 0.23],
-				'green': [1, 1, 0.33],
-				'blue': [1, 1, 0.37],
-				'orange': [1, 1, 0.41],
-				'black': [1, 1, 0.27]
-			}
+			levers: levers
 		});
 		epsilon_log_improved._resetEpsilon = function() {
 			/*
@@ -296,13 +329,7 @@
 		epsilon_first_log.init({
 			$wrapper: $('#EpsilonFirstLog'),
 			_epsilon: 1,
-			levers: {
-				'purple': [1, 1, 0.23],
-				'green': [1, 1, 0.33],
-				'blue': [1, 1, 0.37],
-				'orange': [1, 1, 0.41],
-				'black': [1, 1, 0.27]
-			}
+			levers: levers
 		});
 		epsilon_first_log._resetEpsilon = function() {
 			/*
@@ -319,18 +346,47 @@
 		confidence_bounded.init({
 			$wrapper: $('#ConfidenceBounded'),
 			_epsilon: -1,
-			levers: {
-				'purple': [1, 1, 0.23],
-				'green': [1, 1, 0.33],
-				'blue': [1, 1, 0.37],
-				'orange': [1, 1, 0.41],
-				'black': [1, 1, 0.27]
-			}
+			levers: levers
 		});
 		confidence_bounded._getLeverScore = function(lever) {
-			ratio = this._getCBound(lever);
+			var ratio = this._getCBound(lever);
 			return ratio;
 		}
+
+
+		var confidence_bounded_2 = new bandit();
+		confidence_bounded_2.init({
+			$wrapper: $('#CBLimitedIterations'),
+			_epsilon: -1,
+			maxIterations: 25000,
+			levers: levers
+		});
+		confidence_bounded_2._getLeverScore = function(lever) {
+			if (this._totalIterations >= this.maxIterations) {
+				clearInterval(this._autoInterval);
+				this.$wrapper.css('border', '2px solid green');
+			}
+			var ratio = this._getCBound(lever);
+			return ratio;
+		}
+
+
+		var cb_stat_sig = new bandit();
+		cb_stat_sig.init({
+			$wrapper: $('#StatSigger'),
+			_epsilon: -1,
+			levers: levers
+		});
+		cb_stat_sig._getLeverScore = function(lever) {
+			var stats = this._getSignificance(lever);
+			if (stats.sig99) {
+				return 0;
+			} else {
+				var ratio = this._getCBound(lever);
+				return ratio;
+			}
+		}
+
 	</script>
 </body>
 </html>
